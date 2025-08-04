@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, ref, watch, onMounted } from 'vue'
-import CheckboxGrid from '@/components/form/CheckboxGrid.vue'
+import CheckboxGrid from '@/components/form/CheckBoxGrid.vue'
 
 const props = defineProps({
     modelValue: Object,
