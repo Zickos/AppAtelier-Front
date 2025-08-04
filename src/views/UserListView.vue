@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchUserOnlyList } from '../services/UserService'
+import { fetchUserOnlyList } from '../services/userService'
 import DashboardLayout from '../layouts/DashboardLayout.vue'
 
 const users = ref([])
