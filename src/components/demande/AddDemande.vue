@@ -1,13 +1,17 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { createDemande } from '@/services/demandeService'
+import { fetchRetrofitList } from './../../services/retrofitService'
 import { useAuthStore } from '@/stores/auth'
 
 const emit = defineEmits(['refresh'])
 const authStore = useAuthStore()
 
+const retrofits = ref([])
+
 const userId = ref(authStore.user.id)
 const newDemande = ref({
+  retrofit_id: '',
   user_id: '',
   type: '',
   commentaire: ''
@@ -15,24 +19,40 @@ const newDemande = ref({
 
 const errorMessage = ref('')
 
+
+const loadRetrofits = async () => {
+  try {
+    const res = await fetchRetrofitList()
+    retrofits.value = res.data.data
+  } catch (err) {
+    console.error('Erreur chargement rétros :', err)
+  }
+}
+
+onMounted(() => {
+  loadRetrofits()
+})
+
 const submit = async () => {
   errorMessage.value = ''
   try {
     const demandeToSubmit = {
       ...newDemande.value,
-      user_id: userId.value // 👈 injecte bien la valeur ici
+      user_id: userId.value //
     }
+  console.log(demandeToSubmit)
+
 
     await createDemande(demandeToSubmit)
     emit('refresh')
 
     // Réinitialisation du formulaire
     newDemande.value = {
-      user_id: '',
+      retrofit_id: '',
+      user_id: userId.value,
       type: '',
       commentaire: ''
     }
-
   } catch (err) {
     console.error('Erreur création demande :', err)
     errorMessage.value = err.response?.data?.errors
@@ -60,6 +80,17 @@ const submit = async () => {
           <option disabled value="">Sélectionner un état</option>
           <option value="Commande">Commande</option>
           <option value="Retrait">Retrait</option>
+        </select>
+      </div>
+
+      <!-- Retrofit -->
+      <div>
+        <label class="block text-sm font-semibold mb-2 text-gray-700">🔧 Retrofit</label>
+        <select v-model="newDemande.retrofit_id" class="w-full p-3 border rounded-lg bg-white shadow-sm">
+          <option disabled value="">Choisir un retrofit</option>
+          <option v-for="retrofit in retrofits" :key="retrofit.id" :value="retrofit.id">
+            {{ retrofit.numero || 'Numéro inconnu' }}
+          </option>
         </select>
       </div>
 

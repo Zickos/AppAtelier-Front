@@ -28,8 +28,8 @@
 
         <!-- Sections dynamiques -->
         <NavSection title="Me concernant" :links="meLinks" />
-        <NavSection v-if="auth.user?.role_id === 1" title="Atelier" :links="mecanicLinks" />
-        <NavSection v-if="[1, 3].includes(auth.user?.role_id)" title="Magasin" :links="magasinLinks" />
+        <NavSection v-if="[1, 2, 3].includes(auth.user?.role_id)" title="Magasin" :links="magasinLinks" />
+        <NavSection v-if="[1, 2, 4].includes(auth.user?.role_id)" title="Atelier" :links="mecanicLinks" />
       </div>
 
       <!-- 🔒 Déconnexion -->
@@ -63,52 +63,62 @@ const meLinks = [
   { label: 'Me concernant', icon: Calendar, to: '/planningpersonnel' }
 ]
 
-// ✅ Magasin links avec contrôle par rôle
-const magasinLinks = computed(() => [
-  {
-    label: 'Gestion des demandes',
-    icon: FilePlus,
-    to: '/gestiondemande'
-  },
-  {
-    label: 'Administration',
-    icon: Users,
-    children: [
-      ...(auth.user?.role_id === 1
-        ? [
-          { label: 'Parc Véhicule', to: '/vehiclelist', icon: Truck },
-          { label: 'Gestion des Plannings', to: '/gestionplanningmagasin', icon: FilePlus },
-          { label: 'Parc Société', to: '/vehiclelist', icon: Folder }
-        ]
-        : []),
-    ]
-  }
-])
+const magasinLinks = computed(() => {
+  const links = []
+  console.log('Utilisateur connecté :', auth.user)
 
-
-// ✅ Mécanique links avec contrôle par rôle
-const mecanicLinks = computed(() => [
-  {
-    label: 'Planning Général',
-    icon: Calendar,
-    to: '/planninggeneral'
-  },
-  {
-    label: 'Administration',
-    icon: Users,
-    children: [
-      { label: 'Liste Véhicule', to: '/vehiclelist', icon: Folder },
-      ...(auth.user?.role_id === 1
-        ? [
-          { label: 'Gestion des Véhicules', to: '/gestionvehicle', icon: FilePlus },
-          { label: 'Gestion des Retrofits', to: '/gestionretrofit', icon: FilePlus },
-          { label: 'Gestion des Plannings', to: '/gestionplanningmecano', icon: FilePlus },
-          { label: 'Gestion des Demandes', to: '/gestiondemande', icon: FilePlus }
-        ]
-        : []),
-    ]
+  if ([1, 2, 3].includes(auth.user?.role_id)) {
+    links.push({
+      label: 'Gestion des demandes',
+      icon: FilePlus,
+      to: '/gestiondemande'
+    })
   }
-])
+
+  if ([1, 2].includes(auth.user?.role_id)) {
+    links.push({
+      label: 'Administration',
+      icon: Users,
+      children: [
+        /* { label: 'Parc Véhicule', to: '/vehiclelist', icon: Truck }, */
+        { label: 'Lites des Véhicules', to: '/vehiclelist', icon: FilePlus },
+        { label: 'Gestion des Plannings', to: '/gestionplanningmagasin', icon: FilePlus },
+        /* { label: 'Parc Société', to: '/vehiclelist', icon: Folder } */
+      ]
+    })
+  }
+
+  return links
+})
+
+const mecanicLinks = computed(() => {
+  const links = []
+  console.log('Utilisateur connecté :', auth.user)
+
+  if ([1, 2, 4].includes(auth.user?.role_id)) {
+    links.push({
+      label: 'Planning Général',
+      icon: FilePlus,
+      to: '/planninggeneral'
+    })
+  }
+
+  if ([1, 2].includes(auth.user?.role_id)) {
+    links.push({
+      label: 'Administration',
+      icon: Users,
+      children: [
+        { label: 'Gestion des Véhicules', to: '/gestionvehicle', icon: FilePlus },
+        { label: 'Gestion des Retrofits', to: '/gestionretrofit', icon: FilePlus },
+        { label: 'Gestion des Plannings', to: '/gestionplanningmecano', icon: FilePlus },
+        { label: 'Gestion des Demandes', to: '/gestiondemande', icon: FilePlus }
+      ]
+    })
+  }
+
+  return links
+})
+
 </script>
 
 

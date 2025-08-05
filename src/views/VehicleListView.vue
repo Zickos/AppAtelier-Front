@@ -1,84 +1,107 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { fetchVehicleList } from '../services/vehicleService'
-import DashboardLayout from '../layouts/DashboardLayout.vue'
+import {
+    fetchVehicleList,
+    updateVehicle,
+    deleteVehicle
+} from '@/services/vehicleService.js'
 
-const vehicles = ref([])
-const loading = ref(false)
-const error = ref('')
+import { useCrud } from '@/composables/useCrud.js'
 
-const typeColors = {
-  ABS: 'bg-yellow-100 border-yellow-400 text-yellow-800',
-  TMX: 'bg-green-100 border-green-400 text-green-800',
-  Fenwick: 'bg-blue-100 border-blue-400 text-blue-800',
-  Charlatte: 'bg-red-100 border-red-400 text-red-800',
-  Autre: 'bg-gray-100 border-gray-300 text-gray-700'
-}
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import ListVehicle from '@/components/vehicle/ListVehicle.vue'
+import UpdateModal from '@/components/modal/UpdateModal.vue'
+import { fetchTypeVehicleList } from '@/services/vehicleService.js'
+import ConfirmDeleteModal from '@/components/modal/ConfirmDeleteModal.vue'
 
-const getTypeClass = (typeName) => {
-  return typeColors[typeName] || typeColors.Autre
-}
-
-onMounted(async () => {
-  loading.value = true
-  try {
-    const response = await fetchVehicleList()
-    console.log('Véhicules chargés:', response.data.data)
-    vehicles.value = response.data.data
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Erreur de chargement.'
-  } finally {
-    loading.value = false
-  }
+const {
+    items: vehicles,
+    showUpdateModal,
+    selectedItem,
+    showConfirm,
+    itemToDelete,
+    handleEdit,
+    closeUpdate,
+    handleUpdate,
+    handleDelete,
+    handleCancel,
+    handleConfirm
+} = useCrud({
+    fetchFn: fetchVehicleList,
+    updateFn: updateVehicle,
+    deleteFn: deleteVehicle
 })
+
+const vehicleFormConfig = {
+    fields: [
+        {
+            key: 'type_vehicle_id',         
+            sourceKey: 'type',              
+            label: '🔢 Type',
+            type: 'select',
+            optionKey: 'typevehicles',
+            optionValue: 'id',
+            optionLabel: 'name'
+        },
+        {
+            key: 'name',
+            label: '🔢 Nom',
+            type: 'text'
+        },
+        {
+            key: 'marque',
+            label: '🔢 Marque',
+            type: 'text'
+        },
+        {
+            key: 'num_serie',
+            label: '🔢 Numéro de Série',
+            type: 'text'
+        },
+        {
+            key: 'id_client',
+            label: '🗒️ Id Client',
+            type: 'text'
+        },
+        {
+            key: 'owner',
+            label: '👤 Propriétaire',
+            type: 'text'
+        }
+    ]
+}
+
+const loadVehicleOptions = async () => {
+    try {
+        const res = await fetchTypeVehicleList()
+        return {
+            typevehicles: res.data.data
+        }
+    } catch (err) {
+        console.error('Erreur chargement des options véhicules :', err)
+        return {
+            typevehicles: []
+        }
+    }
+}
+
 </script>
 
 <template>
-  <DashboardLayout>
-    <div class="min-h-full px-6 py-10 bg-gray-50">
-      <div class="mx-auto space-y-8">
-        <header>
-          <h1 class="text-3xl font-bold text-gray-800">Liste des Véhicules</h1>
-          <p class="text-gray-600 mt-1">Affichage détaillé de tous les véhicules enregistrés.</p>
-        </header>
+    <DashboardLayout>
+        <div class="p-6 space-y-10 bg-gray-50 min-h-screen">
+            <header class="text-center">
+                <h1 class="text-4xl font-bold text-indigo-800">Gestion des Véhicules</h1>
+            </header>
 
-        <div v-if="loading" class="text-gray-600">Chargement…</div>
-        <div v-else-if="error" class="text-red-600 font-medium">{{ error }}</div>
+            <UpdateModal v-if="showUpdateModal" :modelValue="selectedItem" :title="'✏️ Modifier le Véhicule'"
+                :config="vehicleFormConfig" :fetchOptions="loadVehicleOptions" @submit="handleUpdate"
+                @cancel="closeUpdate" />
 
-        <div v-else>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div
-              v-for="vehicle in vehicles"
-              :key="vehicle.id"
-              :class="['rounded-lg border shadow-sm p-4', getTypeClass(vehicle.type?.name)]"
-            >
-              <div class="text-xl font-semibold mb-1">
-                🚗 {{ vehicle.type?.name || 'Modèle inconnu' }}
-              </div>
-              <div class="text-sm mb-2">Numéro de série : <strong>{{ vehicle.num_serie || 'N/A' }}</strong></div>
+            <ConfirmDeleteModal v-if="showConfirm"
+                :message="`Es-tu sûr de vouloir supprimer le véhicule ${itemToDelete?.id} ?`" @confirm="handleConfirm"
+                @cancel="handleCancel" />
 
-              <div class="text-xs uppercase font-medium tracking-wide">
-                Propriétaire : <span>{{ vehicle?.owner || 'Inconnu' }}</span>
-                
-                <div
-                  v-for="retrofit in vehicle.retrofits"
-                  :key="retrofit.id"
-                  class="mt-2 text-gray-600"
-                >
-                  <div class="text-sm">
-                    <span class="font-semibold">Affecté le :</span> {{ retrofit.date }}
-                  </div>
-                  <div v-if="retrofit.commentaire" class="text-xs italic text-gray-500">
-                    Commentaire : {{ retrofit.commentaire }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <p v-if="vehicles.length === 0" class="text-gray-500 mt-4 italic">Aucun véhicule trouvé.</p>
+            <ListVehicle :vehicles="vehicles" @edit="handleEdit" @delete="handleDelete" />
         </div>
-      </div>
-    </div>
-  </DashboardLayout>
+    </DashboardLayout>
 </template>

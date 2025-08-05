@@ -88,7 +88,7 @@ const routes = [
     path: "/gestiondemande",
     name: "gestiondemande",
     component: () => import("../views/GestionDemandeView.vue"),
-    meta: { requiresAuth: true, requiresAdmin: true },
+    meta: { requiresAuth: true },
   },
 ];
 

@@ -14,7 +14,7 @@ const loadItems = ref('')
 const authStore = useAuthStore()
 const userId = ref(authStore.user.id) // Get the current user from the auth store
 
-onMounted(async () => {
+const loadPlannings = async () => {
     loading.value = true
     try {
         const response = await fetchInfoPersonnel(userId.value)
@@ -24,7 +24,12 @@ onMounted(async () => {
     } finally {
         loading.value = false
     }
+}
+
+onMounted(() => {
+    loadPlannings()
 })
+
 </script>
 
 <template>
@@ -103,7 +108,7 @@ onMounted(async () => {
                                 <tr v-for="d in plannings.demandes" :key="d.id"
                                     class="border-b hover:bg-gray-50 transition">
                                     <td class="px-4 py-2">
-                                        {{ d.retrofit.id }}
+                                        {{ d.retrofit.numero }}
                                     </td>
                                     <td class="px-4 py-2">
                                         {{ d.retrofit?.vehicle?.type.name }}
@@ -132,7 +137,7 @@ onMounted(async () => {
                         Nouvelle Demande
                     </button>
 
-                    <AddDemande @refresh="loadItems" />
+                    <AddDemande @refresh="loadPlannings" />
 
                 </div>
 
