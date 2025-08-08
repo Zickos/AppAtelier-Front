@@ -132,11 +132,6 @@ onMounted(() => {
 
                     <p v-if="plannings.length === 0" class="text-gray-500 mt-4">Aucune tâche pour le moment.</p>
 
-
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Nouvelle Demande
-                    </button>
-
                     <AddDemande @refresh="loadPlannings" />
 
                 </div>

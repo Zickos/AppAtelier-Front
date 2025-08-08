@@ -78,6 +78,14 @@ const routes = [
   },
 
   {
+    path: "/gestionvehiclesociete",
+    name: "gestionvehiclesociete",
+    component: () => import("../views/GestionVehicleSocieteView.vue"),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+
+
+  {
     path: "/gestionretrofit",
     name: "gestionretrofit",
     component: () => import("../views/GestionRetrofitView.vue"),

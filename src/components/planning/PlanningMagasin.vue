@@ -6,7 +6,8 @@ defineProps({
   }
 })
 
-const emit = defineEmits(['edit', 'delete'])
+const emit = defineEmits(['edit', 'delete', 'view'])
+
 </script>
 
 <template>
@@ -24,8 +25,6 @@ const emit = defineEmits(['edit', 'delete'])
             <th class="p-3 text-left border-b">Utilisateur(s)</th>
             <th class="p-3 text-left border-b">Début</th>
             <th class="p-3 text-left border-b">Fin</th>
-            <th class="p-3 text-left border-b">Véhicule</th>
-            <th class="p-3 text-left border-b">Retrofit</th>
             <th class="p-3 text-left border-b">État</th>
             <th class="p-3 text-left border-b">Commentaire</th>
             <th class="p-3 text-center border-b">Actions</th>
@@ -33,11 +32,7 @@ const emit = defineEmits(['edit', 'delete'])
         </thead>
 
         <tbody>
-          <tr
-            v-for="planning in plannings"
-            :key="planning.id"
-            class="hover:bg-gray-50 transition"
-          >
+          <tr v-for="planning in plannings" :key="planning.id" class="hover:bg-gray-50 transition">
             <td class="p-3 border-b text-sm text-gray-700">{{ planning.id }}</td>
 
             <td class="p-3 border-b text-sm text-gray-800 font-medium">
@@ -55,23 +50,10 @@ const emit = defineEmits(['edit', 'delete'])
               {{ planning.jour_fin || '—' }}
             </td>
 
-            <td class="p-3 border-b text-sm text-gray-600">
-              {{ planning.vehicle?.type?.name || '—' }} —
-              <span class="text-gray-500 text-xs">
-                {{ planning.vehicle?.name || '—' }}
-              </span>
-            </td>
-
-            <td class="p-3 border-b text-sm text-gray-600">
-              {{ planning.retrofit?.numero || '—' }}
-            </td>
-
-            <td class="p-3 border-b text-sm font-medium"
-              :class="{
-                'text-green-600': planning.etat_formatted === 'Terminé',
-                'text-orange-600': planning.etat_formatted === 'En cours'
-              }"
-            >
+            <td class="p-3 border-b text-sm font-medium" :class="{
+              'text-green-600': planning.etat_formatted === 'Terminé',
+              'text-orange-600': planning.etat_formatted === 'En cours'
+            }">
               {{ planning.etat_formatted || '—' }}
             </td>
 
@@ -81,16 +63,16 @@ const emit = defineEmits(['edit', 'delete'])
 
             <td class="p-3 border-b text-center">
               <div class="flex items-center justify-center gap-2">
-                <button
-                  @click="$emit('edit', planning)"
-                  class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded text-xs font-medium transition"
-                >
+                <!-- <button @click="$emit('view', planning)"
+                  class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded text-xs font-medium transition">
+                  👁 Voir
+                </button> -->
+                <button @click="$emit('edit', planning)"
+                  class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded text-xs font-medium transition">
                   ✏️ Modifier
                 </button>
-                <button
-                  @click="$emit('delete', planning)"
-                  class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded text-xs font-medium transition"
-                >
+                <button @click="$emit('delete', planning)"
+                  class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded text-xs font-medium transition">
                   🗑️ Supprimer
                 </button>
               </div>

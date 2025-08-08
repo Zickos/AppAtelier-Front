@@ -6,7 +6,8 @@ defineProps({
   }
 })
 
-const emit = defineEmits(['edit', 'delete'])
+const emit = defineEmits(['edit', 'delete', 'view'])
+
 </script>
 
 <template>
@@ -17,19 +18,13 @@ const emit = defineEmits(['edit', 'delete'])
     </div>
 
     <div v-if="plannings.length" class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-      <div
-        v-for="planning in plannings"
-        :key="planning.id"
-        class="bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition relative"
-      >
+      <div v-for="planning in plannings" :key="planning.id"
+        class="bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition relative">
         <!-- Badge État -->
-        <span
-          class="absolute top-3 right-3 text-xs font-semibold px-3 py-1 rounded-full shadow-sm"
-          :class="{
-            'bg-green-100 text-green-700': planning.etat_formatted === 'Terminé',
-            'bg-orange-100 text-orange-700': planning.etat_formatted === 'En cours'
-          }"
-        >
+        <span class="absolute top-3 right-3 text-xs font-semibold px-3 py-1 rounded-full shadow-sm" :class="{
+          'bg-green-100 text-green-700': planning.etat_formatted === 'Terminé',
+          'bg-orange-100 text-orange-700': planning.etat_formatted === 'En cours'
+        }">
           {{ planning.etat_formatted }}
         </span>
 
@@ -74,16 +69,17 @@ const emit = defineEmits(['edit', 'delete'])
 
         <!-- Actions -->
         <div class="flex justify-end gap-2 mt-2">
-          <button
-            @click="$emit('edit', planning)"
-            class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded text-xs font-medium transition"
-          >
+          <!-- <button @click="$emit('view', planning)"
+            class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded text-xs font-medium transition">
+            👁 Voir
+          </button> -->
+
+          <button @click="$emit('edit', planning)"
+            class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded text-xs font-medium transition">
             ✏️ Modifier
           </button>
-          <button
-            @click="$emit('delete', planning)"
-            class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded text-xs font-medium transition"
-          >
+          <button @click="$emit('delete', planning)"
+            class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded text-xs font-medium transition">
             🗑️ Supprimer
           </button>
         </div>

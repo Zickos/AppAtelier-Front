@@ -65,8 +65,6 @@ const meLinks = [
 
 const magasinLinks = computed(() => {
   const links = []
-  console.log('Utilisateur connecté :', auth.user)
-
   if ([1, 2, 3].includes(auth.user?.role_id)) {
     links.push({
       label: 'Gestion des demandes',
@@ -82,6 +80,7 @@ const magasinLinks = computed(() => {
       children: [
         /* { label: 'Parc Véhicule', to: '/vehiclelist', icon: Truck }, */
         { label: 'Lites des Véhicules', to: '/vehiclelist', icon: FilePlus },
+        { label: 'Gestion des véhicules sociétés', to: '/gestionvehiclesociete', icon: FilePlus },
         { label: 'Gestion des Plannings', to: '/gestionplanningmagasin', icon: FilePlus },
         /* { label: 'Parc Société', to: '/vehiclelist', icon: Folder } */
       ]
@@ -93,8 +92,6 @@ const magasinLinks = computed(() => {
 
 const mecanicLinks = computed(() => {
   const links = []
-  console.log('Utilisateur connecté :', auth.user)
-
   if ([1, 2, 4].includes(auth.user?.role_id)) {
     links.push({
       label: 'Planning Général',

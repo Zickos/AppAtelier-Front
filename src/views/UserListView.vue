@@ -23,7 +23,7 @@ onMounted(async () => {
   loading.value = true
   try {
     const response = await fetchUserOnlyList()
-    console.log('Liste des utilisateurs:', response.data.data)
+    /* console.log('Liste des utilisateurs:', response.data.data) */
     users.value = response.data.data
   } catch (err) {
     error.value = err.response?.data?.message || 'Erreur de chargement.'

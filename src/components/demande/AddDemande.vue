@@ -40,7 +40,7 @@ const submit = async () => {
       ...newDemande.value,
       user_id: userId.value //
     }
-  console.log(demandeToSubmit)
+  /* console.log(demandeToSubmit) */
 
 
     await createDemande(demandeToSubmit)

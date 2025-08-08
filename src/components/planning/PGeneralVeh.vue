@@ -16,7 +16,7 @@ onMounted(async () => {
     const response = await fetchPlanningList()
     plannings.value = response.data.data
 
-    console.log('Plannings chargés:', plannings.value)
+    /* console.log('Plannings chargés:', plannings.value) */
   } catch (err) {
     error.value = err.response?.data?.message || 'Erreur de chargement.'
   } finally {

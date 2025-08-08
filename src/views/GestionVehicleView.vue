@@ -11,6 +11,7 @@ import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import AddVehicle from '@/components/vehicle/AddVehicle.vue'
 import ListVehicle from '@/components/vehicle/ListVehicle.vue'
 import UpdateModal from '@/components/modal/UpdateModal.vue'
+import DetailsModal from '@/components/modal/DetailsModal.vue'
 import { fetchTypeVehicleList } from '@/services/vehicleService.js'
 import ConfirmDeleteModal from '@/components/modal/ConfirmDeleteModal.vue'
 
@@ -26,7 +27,10 @@ const {
     handleUpdate,
     handleDelete,
     handleCancel,
-    handleConfirm
+    handleConfirm,
+    selectedDetailsItem,
+    handleShowDetails,
+    closeDetails
 } = useCrud({
     fetchFn: fetchVehicleList,
     updateFn: updateVehicle,
@@ -36,8 +40,8 @@ const {
 const vehicleFormConfig = {
     fields: [
         {
-            key: 'type_vehicle_id',         
-            sourceKey: 'type',              
+            key: 'type_vehicle_id',
+            sourceKey: 'type',
             label: '🔢 Type',
             type: 'select',
             optionKey: 'typevehicles',
@@ -101,11 +105,33 @@ const loadVehicleOptions = async () => {
                 :config="vehicleFormConfig" :fetchOptions="loadVehicleOptions" @submit="handleUpdate"
                 @cancel="closeUpdate" />
 
+            <DetailsModal v-if="selectedDetailsItem" :model-value="selectedDetailsItem"
+                :title="`Détails du véhicule ${selectedDetailsItem.name}`" :config="{
+                    fields: [
+                        { key: 'name', label: 'Nom' },
+                        { key: 'marque', label: 'Marque' },
+                        { key: 'immatriculation', label: 'Immatriculation' },
+                        { key: 'owner', label: 'Propriétaire' },
+                        {
+                            key: 'retrofits',
+                            label: 'Interventions (Retrofits)',
+                            type: 'array-object',
+                            subFields: [
+                                { key: 'numero', label: 'Numéro' },
+                                { key: 'etat_formatted', label: 'État' },
+                                { key: 'commentaire', label: 'Commentaire' },
+                                { key: 'date', label: 'Date', type: 'date' },
+                                { key: 'photos', label: 'Photos', type: 'images' }
+                            ]
+                        }
+                    ]
+                }" @close="closeDetails" />
+
             <ConfirmDeleteModal v-if="showConfirm"
                 :message="`Es-tu sûr de vouloir supprimer le véhicule ${itemToDelete?.id} ?`" @confirm="handleConfirm"
                 @cancel="handleCancel" />
 
-            <ListVehicle :vehicles="vehicles" @edit="handleEdit" @delete="handleDelete" />
+            <ListVehicle :vehicles="vehicles" @edit="handleEdit" @delete="handleDelete" @view="handleShowDetails" />
         </div>
     </DashboardLayout>
 </template>

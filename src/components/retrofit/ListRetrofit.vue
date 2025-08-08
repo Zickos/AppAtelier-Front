@@ -6,7 +6,8 @@ defineProps({
   }
 })
 
-const emit = defineEmits(['edit', 'delete'])
+const emit = defineEmits(['edit', 'delete', 'view'])
+
 
 const truncate = (text, limit = 100) => {
   if (!text) return '—'
@@ -61,6 +62,10 @@ const truncate = (text, limit = 100) => {
 
             <td class="p-3 border-b text-center">
               <div class="flex items-center justify-center gap-2">
+                <button @click="$emit('view', retrofit)"
+                  class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded text-xs font-medium transition">
+                  👁 Voir
+                </button>
                 <button @click="$emit('edit', retrofit)"
                   class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded text-xs font-medium transition">
                   ✏️ Modifier

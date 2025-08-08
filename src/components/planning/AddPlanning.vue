@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { createPlanning } from './../../services/planningService'
 import { fetchRetrofitList } from './../../services/retrofitService'
 import { fetchVehicleList } from './../../services/vehicleService'
-import { fetchUserList } from './../../services/userService'
+import { fetchUserMecanicienList } from './../../services/userService'
 import { format } from 'date-fns'
 
 const emit = defineEmits(['refresh'])
@@ -42,7 +42,7 @@ const loadRetrofits = async () => {
 
 const loadUsers = async () => {
   try {
-    const res = await fetchUserList()
+    const res = await fetchUserMecanicienList()
     users.value = res.data.data
   } catch (err) {
     console.error('Erreur chargement utilisateurs :', err)

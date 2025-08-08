@@ -11,6 +11,7 @@ import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import AddRetrofit from '@/components/retrofit/AddRetrofit.vue'
 import ListRetrofit from '@/components/retrofit/ListRetrofit.vue'
 import UpdateModal from '@/components/modal/UpdateModal.vue'
+import DetailsModal from '@/components/modal/DetailsModal.vue'
 import { fetchVehicleList } from '@/services/vehicleService.js'
 import ConfirmDeleteModal from '@/components/modal/ConfirmDeleteModal.vue'
 
@@ -26,7 +27,10 @@ const {
     handleUpdate,
     handleDelete,
     handleCancel,
-    handleConfirm
+    handleConfirm,
+    selectedDetailsItem,
+    handleShowDetails,
+    closeDetails
 } = useCrud({
     fetchFn: fetchRetrofitList,
     updateFn: updateRetrofit,
@@ -104,11 +108,24 @@ const loadVehicleOptions = async () => {
                 :config="retrofitFormConfig" :fetchOptions="loadVehicleOptions" @submit="handleUpdate"
                 @cancel="closeUpdate" />
 
+            <DetailsModal v-if="selectedDetailsItem" :model-value="selectedDetailsItem"
+                :title="`Détails du retrofit ${selectedDetailsItem.numero}`" :config="{
+                    fields: [
+                        { key: 'numero', label: 'Numéro du retrofit' },
+                        { key: 'etat_formatted', label: 'État' },
+                        { key: 'types_travaux', label: 'Travaux effectués', type: 'array', subKey: 'name' },
+                        { key: 'commentaire', label: 'Commentaire' },
+                        { key: 'vehicle.name', label: 'Véhicule' },
+                        { key: 'vehicle.num_serie', label: 'N° série du véhicule' },
+                        { key: 'retrofits.photos', label: 'Photos', type: 'images' },
+                    ]
+                }" @close="closeDetails" />
+
             <ConfirmDeleteModal v-if="showConfirm"
                 :message="`Es-tu sûr de vouloir supprimer le retrofit ${itemToDelete?.id} ?`" @confirm="handleConfirm"
                 @cancel="handleCancel" />
 
-            <ListRetrofit :retrofits="retrofits" @edit="handleEdit" @delete="handleDelete" />
+            <ListRetrofit :retrofits="retrofits" @edit="handleEdit" @delete="handleDelete" @view="handleShowDetails" />
         </div>
     </DashboardLayout>
 </template>

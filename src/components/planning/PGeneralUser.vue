@@ -83,7 +83,7 @@ const typeColors = {
 }
 
 const getColorByType = (planning) => {
-  console.log(planning)
+  /* console.log(planning) */
   const type = planning.vehicle?.type?.name || 'Default'
   return typeColors[type] || typeColors.Default
 }

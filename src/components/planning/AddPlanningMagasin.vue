@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { createPlanning } from '../../services/planningService'
-import { fetchUserList } from '../../services/userService'
+import { fetchUserMagasinierList } from '../../services/userService'
 import { format } from 'date-fns'
 
 const emit = defineEmits(['refresh'])
@@ -18,7 +18,7 @@ const users = ref([])
 
 const loadUsers = async () => {
   try {
-    const res = await fetchUserList()
+    const res = await fetchUserMagasinierList()
     users.value = res.data.data
   } catch (err) {
     console.error('Erreur chargement utilisateurs :', err)
